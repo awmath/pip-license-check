@@ -1,0 +1,59 @@
+name: Rust Lint and Test
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check fmt
+        run: cargo --all -- --check
+      - name: Check clippy
+        run: cargo clippy --workspace --all-features --bins --examples --tests --benches -- -D warnings
+
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run tests
+        run: cargo test --workspace --all-features
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build
+        run: cargo build --verbose
+
+
+  release-please:
+    name: Execute release chores
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    runs-on: ubuntu-latest
+    needs:
+      - build
+      - test
+      - lint
+
+    steps:
+      - uses: google-github-actions/release-please-action@v4
+        id: release
+        with:
+          release-type: rust
+          initial-version: 0.1.0
+          bump-minor-pre-major: true
