@@ -1,14 +1,6 @@
 use clap::Parser;
 use log::warn;
 
-
-
-
-
-
-
-
-
 type PackageResults = Vec<PackageResult>;
 
 use pip_license_check::{read_packages_from_requirements, LicenseSettings, PackageResult};
@@ -35,26 +27,27 @@ async fn main() {
     for result in results {
         if result.ignored {
             warn!("Package {} has been ignored as per settings.", result.name)
-        }
-        else if !result.disallowed.is_empty() {
+        } else if !result.disallowed.is_empty() {
             println!(
                 "Found disallowed licenses for {}: {:?}",
                 result.name, result.disallowed
             );
             fail = true
-        }
-        else if cli.verbose && !result.allowed.is_empty() {
-            println!("Found allowed licenses for {}: {:?}", result.name, result.allowed )
-        }
-        else if result.licenses.is_empty() {
+        } else if cli.verbose && !result.allowed.is_empty() {
+            println!(
+                "Found allowed licenses for {}: {:?}",
+                result.name, result.allowed
+            )
+        } else if result.licenses.is_empty() {
             println!("No licenses found for {}", result.name);
             fail = true
-        }
-        else if result.allowed.is_empty() && result.disallowed.is_empty() {
-            println!("No match in allowed or disallowed licenses for license(s) {:?} of {}", result.licenses, result.name);
+        } else if result.allowed.is_empty() && result.disallowed.is_empty() {
+            println!(
+                "No match in allowed or disallowed licenses for license(s) {:?} of {}",
+                result.licenses, result.name
+            );
             fail = true
         }
-
     }
     if fail {
         std::process::exit(1)

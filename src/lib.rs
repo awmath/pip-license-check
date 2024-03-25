@@ -1,4 +1,3 @@
-
 use log::warn;
 use regex::Regex;
 use reqwest;
@@ -6,8 +5,6 @@ use serde::Deserialize;
 use std::collections::{HashMap, HashSet};
 use std::result::Result;
 use std::str;
-
-
 
 /// the info portion of the PyPI API response
 #[derive(Deserialize)]
@@ -134,7 +131,7 @@ impl PackageResult {
                 results.disallowed.push(found.to_string());
             } else if let Some(found) = get_first_match(&settings.allowed, license.as_str()) {
                 results.allowed.push(found.to_string());
-            } 
+            }
         }
         results
     }
