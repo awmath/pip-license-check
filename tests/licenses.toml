@@ -1,0 +1,6 @@
+allowed = ["(The )?MIT( License)?", "BSD"]
+disallowed = [".*[^L]GPL.*", "BSD$"]
+ignored = ["mapdata"]
+
+[missing]
+nothing = "MIT License"
