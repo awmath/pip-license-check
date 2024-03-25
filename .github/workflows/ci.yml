@@ -55,5 +55,5 @@ jobs:
         id: release
         with:
           release-type: rust
-          initial-version: 0.1.0
-          bump-minor-pre-major: true
+          config-file: release-please-config.json
+
