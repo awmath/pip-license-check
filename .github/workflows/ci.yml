@@ -46,7 +46,7 @@ jobs:
 
   release-please:
     runs-on: ubuntu-latest
-    needs: [lint, test, test-docker, test-build]
+    needs: [lint, test, test-docker]
     permissions:
       contents: write
       pull-requests: write
