@@ -1,0 +1,21 @@
+name: Release PR
+
+on:
+  pull_request:
+    branches: ["main"]
+  push: 
+    branches: ["main"]
+
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: google-github-actions/release-please-action@v4
+        id: release
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          release-type: rust
