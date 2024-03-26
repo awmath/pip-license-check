@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/awmath/pip-license-check/compare/v0.1.1...v0.1.2) (2024-03-26)
+
+
+### Bug Fixes
+
+* **ci:** release step id ([c1f9610](https://github.com/awmath/pip-license-check/commit/c1f9610cbdfc6cf53ec0d9e80b5a8a30db7a91d4))
+
 ## [0.1.1](https://github.com/awmath/pip-license-check/compare/v0.1.0...v0.1.1) (2024-03-26)
 
 
