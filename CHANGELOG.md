@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/awmath/pip-license-check/compare/v0.1.0...v0.1.1) (2024-03-26)
+
+
+### Bug Fixes
+
+* **ci:** add release artifact ([375c898](https://github.com/awmath/pip-license-check/commit/375c898537f05961ceb80e2ef62023ce1aee5997))
+
 ## 0.1.0 (2024-03-25)
 
 
