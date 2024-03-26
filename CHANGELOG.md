@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.1](https://github.com/awmath/pip-license-check/compare/v0.2.0...v0.2.1) (2024-03-26)
+
+
+### Bug Fixes
+
+* **ci:** somehow try to convice release-please to update a file ([3a8543d](https://github.com/awmath/pip-license-check/commit/3a8543d7bf85757b35a5b5f103e329ce7608a307))
+
+
+### Miscellaneous Chores
+
+* release 0.2.1 ([f3d7d42](https://github.com/awmath/pip-license-check/commit/f3d7d42e50be923eed227abc066e858a90a6e3a2))
+
 ## [0.2.0](https://github.com/awmath/pip-license-check/compare/v0.1.2...v0.2.0) (2024-03-26)
 
 
