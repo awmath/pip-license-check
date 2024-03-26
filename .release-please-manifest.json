@@ -1,3 +1,9 @@
 {
-  ".": "0.1.2"
+  ".": "0.1.2",
+  "extra-files": [
+    {
+      "type": "generic",
+      "path": ".pre-commit-hooks.yaml"
+    }
+  ]
 }
