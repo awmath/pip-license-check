@@ -1,0 +1,5 @@
+- id: license-check
+  name: PIP License Check
+  language: docker_image
+  files: (requirements.*\.(in|txt)|.licenses.yaml)$
+  entry: ghcr.io/awmath/pip-license-check:0.1.1 
