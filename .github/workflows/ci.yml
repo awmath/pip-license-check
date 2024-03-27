@@ -75,3 +75,5 @@ jobs:
           name: release-build
       - name: Python Semantic Release
         uses: python-semantic-release/python-semantic-release@v8.0.0
+        with:
+          config: release-config.toml
