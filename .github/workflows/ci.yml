@@ -39,9 +39,6 @@ jobs:
           name: release-build
           path: target/release/pip-license-check
   
-  test-precommit:
-
-  
   release:
     runs-on: ubuntu-latest
     needs: [build-binary, lint, test]
