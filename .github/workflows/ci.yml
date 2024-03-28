@@ -73,19 +73,17 @@ jobs:
       contents: write
 
     steps:
-
-
-    steps:
       - name: Download release build
         uses: actions/download-artifact@v4
         with:
           name: release-build
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
 
-    - name: Python Semantic Release
-      uses: python-semantic-release/python-semantic-release@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Python Semantic Release
+        uses: python-semantic-release/python-semantic-release@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           root_options: -v --config release-config.toml
