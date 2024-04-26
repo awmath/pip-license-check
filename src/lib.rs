@@ -2,11 +2,12 @@ use log::warn;
 use regex::Regex;
 use serde::Deserialize;
 use std::collections::{HashMap, HashSet};
-use std::io::Error;
+use std::error::Error;
 use std::result::Result;
 use std::str;
+use std::io::Error as IoError;
 
-/// the info portion of the PyPI API response
+/// the info portion of the ``PyPI`` API response
 #[derive(Deserialize)]
 struct PyPiInfo {
     /// The classifiers of the package
@@ -15,7 +16,7 @@ struct PyPiInfo {
     license: Option<String>,
 }
 
-/// The JSON info returned by the PyPI API
+/// The JSON info returned by the ``PyPI`` API
 #[derive(Deserialize)]
 struct PyPiJson {
     /// The info portion of the PyPI API response
@@ -86,15 +87,11 @@ pub struct LicenseSettings {
 }
 
 impl LicenseSettings {
-    pub fn from_file(file_name: &str) -> Self {
+    pub fn from_file(file_name: &str) -> Result<Self, Box<dyn Error>> {
         let settings_file =
-            std::fs::read_to_string(file_name).expect("Could not read settings file");
-        match toml::from_str(&settings_file) {
-            Ok(settings) => settings,
-            Err(e) => {
-                panic!("Could not read settings file. {}.", e)
-            }
-        }
+            std::fs::read_to_string(file_name)?;
+        let settings = toml::from_str(&settings_file)?;
+        Ok(settings)
     }
 }
 
@@ -152,7 +149,11 @@ fn extract_package_name_from_line(line: &str) -> Option<String> {
 
 /// Read the requirements file and return the list of packages.
 /// Ignores comments and empty lines.
-pub fn read_packages_from_requirements(file_name: &str) -> Result<Vec<String>, Error> {
+/// 
+/// # Errors
+/// 
+/// ``std::io::Error`` on errors reading the requirements file
+pub fn read_packages_from_requirements(file_name: &str) -> Result<Vec<String>, IoError> {
     let mut packages = Vec::new();
     let file = std::fs::read_to_string(file_name)?;
     for line in file.lines() {
@@ -162,7 +163,7 @@ pub fn read_packages_from_requirements(file_name: &str) -> Result<Vec<String>, E
     }
 
     packages.sort();
-    return Ok(packages);
+    Ok(packages)
 }
 
 /// Fetch the JSON info from PyPI for a package
@@ -342,7 +343,7 @@ mod test {
 
     #[test]
     fn test_load_settings() {
-        let settings = LicenseSettings::from_file("tests/licenses.toml");
+        let settings = LicenseSettings::from_file("tests/licenses.toml").unwrap();
         let mut packages = settings
             .allowed
             .iter()
