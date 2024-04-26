@@ -9,9 +9,15 @@ use pip_license_check::{read_packages_from_requirements, LicenseSettings, Packag
 async fn main() {
     let cli = CliArgs::parse();
 
-    let settings = LicenseSettings::from_file(&cli.settings);
+    // try to read license settings file or exit
+    let settings = LicenseSettings::from_file(&cli.settings).unwrap_or_else(|err| {
+        println!("Could not read license settings {err}.");
+        std::process::exit(1);
+    });
+
+    // try to read  the requirements file or exit
     let packages = read_packages_from_requirements(&cli.requirements).unwrap_or_else(|err| {
-        println!("Could not read requirements: {}", err);
+        println!("Could not read requirements: {err}");
         std::process::exit(1);
     });
 
