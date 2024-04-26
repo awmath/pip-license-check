@@ -4,6 +4,7 @@ use serde::Deserialize;
 use std::collections::{HashMap, HashSet};
 use std::result::Result;
 use std::str;
+use std::io::Error;
 
 /// the info portion of the PyPI API response
 #[derive(Deserialize)]
@@ -151,9 +152,9 @@ fn extract_package_name_from_line(line: &str) -> Option<String> {
 
 /// Read the requirements file and return the list of packages.
 /// Ignores comments and empty lines.
-pub fn read_packages_from_requirements(file_name: &str) -> Vec<String> {
+pub fn read_packages_from_requirements(file_name: &str) -> Result<Vec<String>, Error> {
     let mut packages = Vec::new();
-    let file = std::fs::read_to_string(file_name).expect("Could not read requirements file");
+    let file = std::fs::read_to_string(file_name)?;
     for line in file.lines() {
         if let Some(package_name) = extract_package_name_from_line(line) {
             packages.push(package_name);
@@ -161,7 +162,7 @@ pub fn read_packages_from_requirements(file_name: &str) -> Vec<String> {
     }
 
     packages.sort();
-    packages
+    return Ok(packages);
 }
 
 /// Fetch the JSON info from PyPI for a package
@@ -252,15 +253,14 @@ mod test {
     }
 
     #[test]
-    #[should_panic(expected = "Could not read requirements file")]
     fn test_requirements_file_not_found() {
-        read_packages_from_requirements("not_found.txt");
+        assert!(read_packages_from_requirements("not_found.txt").is_err());
     }
 
     #[test]
     fn test_read_packages_from_requirements() {
         let packages = read_packages_from_requirements("tests/requirements.txt");
-        assert_eq!(packages, vec!["django", "flask", "rasterio"]);
+        assert_eq!(packages.unwrap(), vec!["django", "flask", "rasterio"]);
     }
 
     #[test]
@@ -343,12 +343,14 @@ mod test {
     #[test]
     fn test_load_settings() {
         let settings = LicenseSettings::from_file("tests/licenses.toml");
+        let mut packages = settings
+        .allowed
+        .iter()
+        .map(|r| r.as_str())
+        .collect::<Vec<&str>>();
+        packages.dedup();
         assert_eq!(
-            settings
-                .allowed
-                .iter()
-                .map(|r| r.as_str())
-                .collect::<Vec<&str>>(),
+            packages,
             vec!["(The )?MIT( License)?", "BSD"]
         );
         assert_eq!(

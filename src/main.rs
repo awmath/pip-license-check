@@ -10,7 +10,10 @@ async fn main() {
     let cli = CliArgs::parse();
 
     let settings = LicenseSettings::from_file(&cli.settings);
-    let packages = read_packages_from_requirements(&cli.requirements);
+    let packages = read_packages_from_requirements(&cli.requirements).unwrap_or_else(|err|{
+        println!("Could not read requirements: {}", err);
+        std::process::exit(1);
+    });
 
     // let results = Arc::new(Mutex::new(PackageResults::new()));
     let mut results = PackageResults::new();
