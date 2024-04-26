@@ -10,7 +10,7 @@ async fn main() {
     let cli = CliArgs::parse();
 
     let settings = LicenseSettings::from_file(&cli.settings);
-    let packages = read_packages_from_requirements(&cli.requirements).unwrap_or_else(|err|{
+    let packages = read_packages_from_requirements(&cli.requirements).unwrap_or_else(|err| {
         println!("Could not read requirements: {}", err);
         std::process::exit(1);
     });
