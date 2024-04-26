@@ -3,9 +3,9 @@ use regex::Regex;
 use serde::Deserialize;
 use std::collections::{HashMap, HashSet};
 use std::error::Error;
+use std::io::Error as IoError;
 use std::result::Result;
 use std::str;
-use std::io::Error as IoError;
 
 /// the info portion of the ``PyPI`` API response
 #[derive(Deserialize)]
@@ -88,8 +88,7 @@ pub struct LicenseSettings {
 
 impl LicenseSettings {
     pub fn from_file(file_name: &str) -> Result<Self, Box<dyn Error>> {
-        let settings_file =
-            std::fs::read_to_string(file_name)?;
+        let settings_file = std::fs::read_to_string(file_name)?;
         let settings = toml::from_str(&settings_file)?;
         Ok(settings)
     }
@@ -149,9 +148,9 @@ fn extract_package_name_from_line(line: &str) -> Option<String> {
 
 /// Read the requirements file and return the list of packages.
 /// Ignores comments and empty lines.
-/// 
+///
 /// # Errors
-/// 
+///
 /// ``std::io::Error`` on errors reading the requirements file
 pub fn read_packages_from_requirements(file_name: &str) -> Result<Vec<String>, IoError> {
     let mut packages = Vec::new();
