@@ -2,9 +2,9 @@ use log::warn;
 use regex::Regex;
 use serde::Deserialize;
 use std::collections::{HashMap, HashSet};
+use std::io::Error;
 use std::result::Result;
 use std::str;
-use std::io::Error;
 
 /// the info portion of the PyPI API response
 #[derive(Deserialize)]
@@ -344,15 +344,12 @@ mod test {
     fn test_load_settings() {
         let settings = LicenseSettings::from_file("tests/licenses.toml");
         let mut packages = settings
-        .allowed
-        .iter()
-        .map(|r| r.as_str())
-        .collect::<Vec<&str>>();
+            .allowed
+            .iter()
+            .map(|r| r.as_str())
+            .collect::<Vec<&str>>();
         packages.dedup();
-        assert_eq!(
-            packages,
-            vec!["(The )?MIT( License)?", "BSD"]
-        );
+        assert_eq!(packages, vec!["(The )?MIT( License)?", "BSD"]);
         assert_eq!(
             settings
                 .disallowed
