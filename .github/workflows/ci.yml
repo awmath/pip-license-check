@@ -57,7 +57,11 @@ jobs:
           name: release-build
       
       - name: Prepare dist
-        run: mkdir -p dist && mv pip-license-check dist/
+        run: |
+          mkdir -p dist
+          mv pip-license-check dist/
+          chmod +x dist/pip-license-chec
+
 
       - name: Set up Python
         uses: actions/setup-python@v4
