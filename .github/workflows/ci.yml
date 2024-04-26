@@ -63,7 +63,7 @@ jobs:
         run: |
           mkdir -p dist
           mv pip-license-check dist/
-          chmod +x dist/pip-license-chec
+          chmod +x dist/pip-license-check
 
       - name: Set up Python
         uses: actions/setup-python@v4
