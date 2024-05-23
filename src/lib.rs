@@ -6,6 +6,7 @@ use std::error::Error;
 use std::io::Error as IoError;
 use std::result::Result;
 use std::str;
+use std::sync::Arc;
 
 /// the info portion of the ``PyPI`` API response
 #[derive(Deserialize)]
@@ -103,8 +104,10 @@ pub struct PackageResult {
     pub ignored: bool,
 }
 
+static MAX_LENGTH_LICENSE: usize = 60;
+
 impl PackageResult {
-    pub async fn new(name: String, settings: &LicenseSettings) -> Self {
+    pub async fn new(name: String, settings: Arc<LicenseSettings>) -> Self {
         let mut results = Self {
             licenses: get_licenses_for_package(&name).await,
             name: name.clone(),
@@ -124,9 +127,13 @@ impl PackageResult {
 
         for license in results.licenses.iter() {
             if let Some(found) = get_first_match(&settings.disallowed, license.as_str()) {
-                results.disallowed.push(found.to_string());
+                let mut truncated = found.to_string();
+                truncated.truncate(MAX_LENGTH_LICENSE);
+                results.disallowed.push(truncated);
             } else if let Some(found) = get_first_match(&settings.allowed, license.as_str()) {
-                results.allowed.push(found.to_string());
+                let mut truncated = found.to_string();
+                truncated.truncate(MAX_LENGTH_LICENSE);
+                results.allowed.push(truncated);
             }
         }
         results

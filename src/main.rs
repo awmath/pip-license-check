@@ -1,39 +1,44 @@
-use clap::Parser;
-use log::warn;
+use std::sync::Arc;
 
+use clap::Parser;
+use futures::future::join_all;
+use log::warn;
 type PackageResults = Vec<PackageResult>;
 
 use pip_license_check::{read_packages_from_requirements, LicenseSettings, PackageResult};
+use tokio::sync::Mutex;
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() {
     let cli = CliArgs::parse();
 
-    // try to read license settings file or exit
-    let settings = LicenseSettings::from_file(&cli.settings).unwrap_or_else(|err| {
-        println!("Could not read license settings {err}.");
-        std::process::exit(1);
-    });
+    let settings = Arc::new(
+        LicenseSettings::from_file(&cli.settings).unwrap_or_else(|err| {
+            println!("Could not read license settings {err}.");
+            std::process::exit(1);
+        }),
+    );
 
-    // try to read  the requirements file or exit
     let packages = read_packages_from_requirements(&cli.requirements).unwrap_or_else(|err| {
         println!("Could not read requirements: {err}");
         std::process::exit(1);
     });
 
-    // let results = Arc::new(Mutex::new(PackageResults::new()));
-    let mut results = PackageResults::new();
+    let results = Arc::new(Mutex::new(PackageResults::new()));
 
-    let tasks = packages
-        .into_iter()
-        .map(|package_name| PackageResult::new(package_name, &settings));
+    let tasks = packages.into_iter().map(|package_name| {
+        let arc_settings = Arc::clone(&settings);
+        let results = Arc::clone(&results);
+        tokio::spawn(async move {
+            let result = PackageResult::new(package_name, arc_settings).await;
+            results.lock().await.push(result);
+        })
+    });
 
-    for task in tasks {
-        results.push(task.await);
-    }
+    join_all(tasks).await;
 
     let mut fail = false;
-    for result in results {
+    for result in results.lock().await.iter() {
         if result.ignored {
             warn!("Package {} has been ignored as per settings.", result.name)
         } else if !result.disallowed.is_empty() {
